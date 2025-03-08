@@ -20,28 +20,34 @@ end
 
 point = 0
 frames.each_with_index do |frame, index|
-  next unless (0..9).cover?(index)
+  next if index >= 10
 
-  point += if index == 9 && frame.sum == 10 && frame[0] != 10 # 10フレーム目で、1投目と2投目が合わせて10点でスペアだった場合
-             frame[0] + frame[1] + frames[index + 1][0]
-           elsif  index == 9 && frame[0] == 10 && frames[index + 1][0] == 10 # 10フレーム目で、1投目と2投目が両方ともストライクの場合
-             frame[0] + frames[index + 1][0] + frames[index + 2][0]
-           elsif  index == 9 && frame[0] == 10 && frames[index + 1].sum != 10 # 10フレーム目で、1投目がストライクで、次のフレームがスペアでもストライクでもない場合
-             frame[0] + frames[index + 1][0] + frames[index + 1][1]
-           elsif frame[0] == 10 && frames[index + 1][0] == 10 && frames[index + 2][0] == 10 # 1投目がストライクで、次の2フレームもストライクだった場合
-             frame[0] + frames[index + 1][0] + frames[index + 2][0]
-           elsif frame[0] == 10 && frames[index + 1][0] == 10 # 1投目がストライクで、次のフレームもストライクだった場合
-             frame[0] + frames[index + 1][0] + frames[index + 2][0]
-           elsif frame[0] == 10 && frames[index + 1].sum == 10 # 1投目がストライクで、次のフレームがスペアだった場合
-             frame[0] + frames[index + 1][0] + frames[index + 1][1]
-           elsif frame[0] == 10 && frames[index + 1].sum != 10 # 1投目がストライクで、次のフレームがスペアでもストライクでもない場合
-             frame[0] + frames[index + 1][0] + frames[index + 1][1]
-           elsif frame[0] == 10 && frames[index + 1][0] != 10 # 1投目がストライクで、次の1投目がストライクでない場合
-             frame[0] + frames[index + 1][0]
-           elsif frame.sum == 10 # 1フレームがスペアだった場合
-             frame.sum + frames[index + 1][0]
-           else # スペアでもストライクでもない場合
-             frame.sum
-           end
+  if index == 9
+    drop_frames = frames.drop(9)
+    drop_frames.flatten!
+    point += drop_frames.sum
+    next
+  end
+
+  if (point += frame.sum) && (frame.sum != 10 && frame[0] != 10)
+    next # スペアでもストライクでもない場合はスキップ
+  end
+
+  if frame.sum == 10 && frame[0] != 10 # スペアの場合
+    point += frames[index + 1][0] # 次の1投目を加算する
+    next if frame[0] == 10 # ストライクの場合はスキップ
+  end
+  next unless frame[0] == 10 # ストライクの場合
+
+  if frames[index + 1][0] != 10
+    point += frames[index + 1][0] # 次の1投目を加算する
+  end
+  if frames[index + 1].sum == 10 || frames[index + 1].sum != 10
+    point += frames[index + 1][1] # 次の2投目を加算する
+  end
+  if frames[index + 1][0] == 10
+    frames[index + 1][0] == 10 || frames[index + 2][0] == 10
+    point += frames[index + 1][0] + frames[index + 2][0] # 次の1投目、2投目を加算する
+  end
 end
 puts point
