@@ -20,34 +20,25 @@ end
 
 point = 0
 frames.each_with_index do |frame, index|
-  next if index >= 10
+  break if index >= 9
 
-  if index == 9
-    drop_frames = frames.drop(9)
-    drop_frames.flatten!
-    point += drop_frames.sum
-    next
-  end
+  point += frame.sum # フレームを合計する
+  next if frame.sum != 10 && frame[0] != 10 # スペアとストライクはスキップ
 
-  if (point += frame.sum) && (frame.sum != 10 && frame[0] != 10)
-    next # スペアでもストライクでもない場合はスキップ
-  end
-
-  if frame.sum == 10 && frame[0] != 10 # スペアの場合
-    point += frames[index + 1][0] # 次の1投目を加算する
-    next if frame[0] == 10 # ストライクの場合はスキップ
-  end
-  next unless frame[0] == 10 # ストライクの場合
-
-  if frames[index + 1][0] != 10
+  if frame.sum == 10 # スペアもしくはストライクの場合
     point += frames[index + 1][0] # 次の1投目を加算する
   end
-  if frames[index + 1].sum == 10 || frames[index + 1].sum != 10
-    point += frames[index + 1][1] # 次の2投目を加算する
-  end
-  if frames[index + 1][0] == 10
-    frames[index + 1][0] == 10 || frames[index + 2][0] == 10
-    point += frames[index + 1][0] + frames[index + 2][0] # 次の1投目、2投目を加算する
-  end
+
+  break if frame.sum != 10 # スペアの場合は計算を終了させる
+
+  next unless frame[0] == 10 # ストライクでない場合はスキップ
+
+  point += if frames[index + 1][0] == 10 # 次の1フレームもストライクの場合
+             frames[index + 2][0] # 次の次のフレームの1投目を加算する
+           else
+             frames[index + 1][1] # 次の2投目を加算する
+           end
 end
+
+point += frames[9..].flatten.sum
 puts point
