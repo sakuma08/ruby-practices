@@ -22,21 +22,17 @@ point = 0
 frames.each_with_index do |frame, index|
   break if index >= 9
 
-  point += frame.sum # フレームを合計する
-  next if frame.sum != 10 && frame[0] != 10 # スペアとストライクはスキップ
+  point += frame.sum
+  next if frame.sum != 10
 
-  if frame.sum == 10 # スペアもしくはストライクの場合
-    point += frames[index + 1][0] # 次の1投目を加算する
-  end
+  point += frames[index + 1][0]
 
-  break if frame.sum != 10 # スペアの場合は計算を終了させる
+  next unless frame[0] == 10
 
-  next unless frame[0] == 10 # ストライクでない場合はスキップ
-
-  point += if frames[index + 1][0] == 10 # 次の1フレームもストライクの場合
-             frames[index + 2][0] # 次の次のフレームの1投目を加算する
+  point += if frames[index + 1][0] == 10
+             frames[index + 2][0]
            else
-             frames[index + 1][1] # 次の2投目を加算する
+             frames[index + 1][1]
            end
 end
 
