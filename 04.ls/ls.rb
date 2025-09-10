@@ -2,30 +2,36 @@
 # frozen_string_literal: true
 
 COL = 3
+COLUMN_SPACING = 2
 
 def main
   rows = files
-  rows = sorted_numbers(rows)
-  show(rows)
+  formatted_rows = format_for_show(rows)
+  show(formatted_rows)
 end
 
 def files
   Dir.glob('*')
 end
 
-def sorted_numbers(arr)
+def format_for_show(arr)
   row_count = (arr.size.to_f / COL).ceil
   rows = arr.each_slice(row_count).to_a
   remainder = arr.size % COL
   space_count = (COL - remainder) % COL
-  space_count.times { rows.last << ' ' }
+  space_count.times { rows.last << nil }
   rows.transpose
 end
 
-def show(rows)
-  rows.each do |row|
-    row.each do |col|
-      print col.ljust(13)
+def show(formatted_rows)
+  widths = []
+  (0...COL).each do |i|
+    max = formatted_rows.map {|row| row[i].to_s.length }.max || 0
+    widths << max
+  end
+  formatted_rows.each do |row|
+    row.each_with_index do |col, i|
+      print col.to_s.ljust(widths[i] + COLUMN_SPACING)
     end
     puts
   end
