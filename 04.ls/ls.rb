@@ -26,7 +26,7 @@ end
 def show(formatted_rows)
   widths = []
   (0...COL).each do |i|
-    max = formatted_rows.map {|row| row[i].to_s.length }.max || 0
+    max = formatted_rows.map { |row| row[i].to_s.length }.max || 0
     widths << max
   end
   formatted_rows.each do |row|
