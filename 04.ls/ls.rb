@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 COL = 3
-COLUMN_SPACING = 2
+COLUMN_SPACING = 1
 
 def main
   rows = files
@@ -24,11 +24,8 @@ def format_for_show(arr)
 end
 
 def show(formatted_rows)
-  widths = []
-  (0...COL).each do |i|
-    max = formatted_rows.map { |row| row[i].to_s.length }.max || 0
-    widths << max
-  end
+  max_length = formatted_rows.flat_map { |row| row.map { |file| file.to_s.length } }.max
+  widths = Array.new(COL, max_length)
   formatted_rows.each do |row|
     row.each_with_index do |col, i|
       print col.to_s.ljust(widths[i] + COLUMN_SPACING)
