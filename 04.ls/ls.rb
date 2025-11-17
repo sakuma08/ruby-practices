@@ -1,17 +1,27 @@
 #! /usr/bin/env ruby
 # frozen_string_literal: true
 
+require 'optparse'
+
 COL = 3
 COLUMN_SPACING = 1
 
 def main
-  rows = files
+  options = {}
+  opt = OptionParser.new
+  opt.on('-a') { options[:all] = true }
+  opt.parse(ARGV)
+  rows = files(options[:all])
   formatted_rows = format_for_show(rows)
   show(formatted_rows)
 end
 
-def files
-  Dir.glob('*')
+def files(show_all)
+  if show_all
+    Dir.glob('*', File::FNM_DOTMATCH)
+  else
+    Dir.glob('*')
+  end
 end
 
 def format_for_show(arr)
