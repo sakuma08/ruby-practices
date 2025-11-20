@@ -9,16 +9,16 @@ COLUMN_SPACING = 1
 def main
   options = {}
   opt = OptionParser.new
-  opt.on('-a') { options[:all] = true }
+  opt.on('-r') { options[:reverse] = true }
   opt.parse(ARGV)
-  rows = files(options[:all])
+  rows = files(options[:reverse])
   formatted_rows = format_for_show(rows)
   show(formatted_rows)
 end
 
 def files(show_all)
   if show_all
-    Dir.glob('*', File::FNM_DOTMATCH)
+    Dir.glob('*').reverse
   else
     Dir.glob('*')
   end
