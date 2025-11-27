@@ -16,8 +16,8 @@ def main
   show(formatted_rows)
 end
 
-def files(show_all)
-  if show_all
+def files(reverse)
+  if reverse
     Dir.glob('*').reverse
   else
     Dir.glob('*')
