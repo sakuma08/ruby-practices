@@ -14,8 +14,7 @@ def main
   opt.on('-a') { options[:all] = true }
   opt.on('-r') { options[:reverse] = true }
   opt.parse(ARGV)
-  show_all = files(options[:all], options[:reverse])
-  names = show_all
+  names = files(options[:all], options[:reverse])
   if options[:long]
     show_long(names)
   else
