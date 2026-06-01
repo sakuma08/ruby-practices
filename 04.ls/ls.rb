@@ -11,8 +11,10 @@ def main
   options = {}
   opt = OptionParser.new
   opt.on('-l') { options[:long] = true }
+  opt.on('-a') { options[:all] = true }
+  opt.on('-r') { options[:reverse] = true }
   opt.parse(ARGV)
-  names = files
+  names = files(options[:all], options[:reverse])
   if options[:long]
     show_long(names)
   else
@@ -21,8 +23,11 @@ def main
   end
 end
 
-def files
-  Dir.glob('*')
+def files(show_all, reverse)
+  file_names = Dir.glob('*')
+  file_names = Dir.glob('*', File::FNM_DOTMATCH) if show_all
+  file_names = file_names.reverse if reverse
+  file_names
 end
 
 def format_for_show(arr)
