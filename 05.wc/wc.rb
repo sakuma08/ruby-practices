@@ -3,6 +3,8 @@
 
 require 'optparse'
 
+COUNTS = %i[lines words bytes].freeze
+
 def main
   options = parse_options
   process_input(options)
@@ -29,9 +31,9 @@ end
 
 def options_with_defaults(options)
   if options.values.none?
-    options[:lines] = true
-    options[:words] = true
-    options[:bytes] = true
+    COUNTS.each do |count|
+      options[count] = true
+    end
   end
 
   options
@@ -66,9 +68,9 @@ def process_input(options)
 
     output(counts, options, filename)
 
-    sum_counts[:lines] += counts[:lines]
-    sum_counts[:words] += counts[:words]
-    sum_counts[:bytes] += counts[:bytes]
+    COUNTS.each do |key|
+      sum_counts[key] += counts[key]
+    end
   end
   output_total_counts(sum_counts, options)
 end
@@ -86,17 +88,12 @@ end
 
 def output(counts, options, name = nil)
   show = []
-  show << counts[:lines] if options[:lines]
-  show << counts[:words] if options[:words]
-  show << counts[:bytes] if options[:bytes]
+  COUNTS.each do |count|
+    show << counts[count] if options[count]
+  end
 
   formatted_counts = show.map { |count| count.to_s.rjust(8) }
-
-  if name
-    puts "#{formatted_counts.join('')} #{name}"
-  else
-    puts formatted_counts.join('')
-  end
+  puts "#{formatted_counts.join('')} #{name}"
 end
 
 main
